@@ -656,6 +656,33 @@
   .btn-save:hover{background:#08708c;}
   .btn-save:disabled{background:var(--grey-mid);cursor:not-allowed;}
 
+  .meeting-picker{display:flex;align-items:center;gap:8px;}
+  .meeting-picker select{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:700;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18);
+    color:#fff;
+    border-radius:8px;
+    padding:7px 10px;
+    outline:none;
+    max-width:220px;
+  }
+  .meeting-picker select option{color:var(--ink);}
+  .btn-new{
+    background:none;
+    border:1px solid rgba(255,255,255,.35);
+    color:#fff;
+    border-radius:8px;
+    padding:7px 12px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn-new:hover{border-color:#fff;}
+
   @media(max-width:760px){
     .team-grid{grid-template-columns:1fr;}
     .header-top{flex-direction:column;}
@@ -673,7 +700,7 @@
 <body>
 
 <div class="howto" id="howto">
-  <p><b>How this pack works:</b> click into any field to edit it, and use the "+ Add" buttons for extra tasks, todo/focus points, agenda items or actions. When you're happy with your update, click <b>Save</b> at the bottom — it opens a folder dialog; save it over this same file in the IMD folder ("IMD Practice Meeting Pack.html"). Teammates will see your update next time they open it from OneDrive/Teams. (If your browser can't open that dialog, Save will tell you to press Ctrl+S and choose "Webpage, HTML only" instead.)</p>
+  <p><b>How this pack works:</b> click into any field to edit it, and use the "+ Add" buttons for extra tasks, todo/focus points, agenda items or actions. Use the pack selector at the top to switch between past meetings, or "+ New pack" to start one. Click <b>Save</b> when you're done — it's shared and synced live, so teammates see your update straight away.</p>
   <button onclick="document.getElementById('howto').classList.add('hidden')">Got it, hide this</button>
 </div>
 
@@ -684,6 +711,10 @@
       <div class="brand-title">
         <h1>IMD Practice &mdash; Bi-Weekly Meeting Pack</h1>
       </div>
+    </div>
+    <div class="meeting-picker">
+      <select id="meetingSelect"></select>
+      <button class="btn-new" onclick="createNewMeeting()">+ New pack</button>
     </div>
     <div class="meeting-meta">
       <div class="meta-box">
@@ -827,6 +858,7 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const TEAM = ['Joseph','Reinhardt','Ayo','Manish'];
   const DEFAULT_AGENDA = [
@@ -844,8 +876,12 @@
     {name:'Complete',    color:'var(--green)'}
   ];
 
-  let dbApi = null;
-  let docRef = null;
+  const SUPABASE_URL = 'https://iyxggrrajpnjjebbbezr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_uvNPp0GadBiGRekS1zAlqw_xEKgoEGI';
+
+  let sb = null;
+  let currentMeetingId = null;
+  let realtimeChannel = null;
   let dirty = false;
   let localFileHandle = null;
 
@@ -1137,19 +1173,22 @@
   async function saveState(){
     const btn = document.getElementById('saveBtn');
 
-    if(docRef){
+    if(sb && currentMeetingId){
       btn.disabled = true;
       setSaveStatus('Saving…');
       const state = serializeState();
-      state.savedAt = new Date().toISOString();
-      try{
-        await docRef.set(state);
-        dirty = false;
-        setSaveStatus('Saved just now');
-      }catch(e){
-        setSaveStatus('Save failed — try again');
-      }
+      const { error } = await sb
+        .from('meetings')
+        .update({ state, meeting_date: state.meta.date || null, updated_at: new Date().toISOString() })
+        .eq('id', currentMeetingId);
       btn.disabled = false;
+      if(error){
+        setSaveStatus('Save failed — try again');
+        return;
+      }
+      dirty = false;
+      setSaveStatus('Saved just now');
+      refreshMeetingLabel(currentMeetingId, state.meta.date);
       return;
     }
 
@@ -1204,20 +1243,80 @@
     seed.textContent = JSON.stringify(state);
   }
 
-  function handleSnapshot(snap){
-    if(!snap.exists) return;
-    if(snap.metadata.hasPendingWrites) return;
+  function handleSnapshot(row){
     if(dirty){
-      setSaveStatus("Someone else saved — click Save to overwrite, or reload to see theirs");
+      setSaveStatus('Someone else saved — click Save to overwrite, or reload to see theirs');
       return;
     }
-    const data = snap.data();
-    renderState(data);
-    setSaveStatus(data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'Up to date');
+    renderState(row.state);
+    setSaveStatus(row.updated_at ? ('Last saved ' + formatTimestamp(row.updated_at)) : 'Up to date');
   }
 
-  function handleSnapshotError(){
-    setSaveStatus('Live sync lost — Save still works');
+  function meetingLabel(row){
+    if(!row.meeting_date) return 'Untitled pack';
+    return new Date(row.meeting_date + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  }
+
+  async function refreshMeetingLabel(id, meetingDate){
+    const sel = document.getElementById('meetingSelect');
+    const opt = sel.querySelector('option[value="' + id + '"]');
+    if(opt) opt.textContent = meetingLabel({ meeting_date: meetingDate });
+  }
+
+  async function populateMeetingSelect(rows, selectedId){
+    const sel = document.getElementById('meetingSelect');
+    sel.innerHTML = '';
+    rows.forEach(row => {
+      const opt = document.createElement('option');
+      opt.value = row.id;
+      opt.textContent = meetingLabel(row);
+      sel.appendChild(opt);
+    });
+    sel.value = selectedId;
+  }
+
+  async function loadMeetingList(selectId){
+    const { data, error } = await sb
+      .from('meetings')
+      .select('id, meeting_date, updated_at')
+      .order('meeting_date', { ascending:false });
+    if(error) throw error;
+
+    if(!data.length){
+      await createNewMeeting();
+      return;
+    }
+
+    const target = selectId || data[0].id;
+    await populateMeetingSelect(data, target);
+    await loadMeeting(target);
+  }
+
+  async function loadMeeting(id){
+    const { data, error } = await sb.from('meetings').select('*').eq('id', id).single();
+    if(error){ setSaveStatus('Could not load that pack'); return; }
+    currentMeetingId = id;
+    renderState(data.state);
+    dirty = false;
+    setSaveStatus(data.updated_at ? ('Last saved ' + formatTimestamp(data.updated_at)) : 'Not saved yet');
+    subscribeToMeeting(id);
+  }
+
+  function subscribeToMeeting(id){
+    if(realtimeChannel) sb.removeChannel(realtimeChannel);
+    realtimeChannel = sb.channel('meeting-' + id)
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'meetings', filter:'id=eq.' + id },
+        payload => handleSnapshot(payload.new))
+      .subscribe();
+  }
+
+  async function createNewMeeting(){
+    const state = { meta:{ date:new Date().toISOString().slice(0,10), attendees:{} }, agenda:[], people:{}, notes:'', actions:[] };
+    const { data, error } = await sb.from('meetings').insert({ meeting_date: state.meta.date, state }).select('id, meeting_date, updated_at').single();
+    if(error){ setSaveStatus('Could not create new pack'); return; }
+    const { data: rows } = await sb.from('meetings').select('id, meeting_date, updated_at').order('meeting_date', { ascending:false });
+    await populateMeetingSelect(rows, data.id);
+    await loadMeeting(data.id);
   }
 
   async function initApp(){
@@ -1234,22 +1333,21 @@
          t.classList.contains('row-del') || t.classList.contains('btn-add') || t.classList.contains('btn-add-sm')) markDirty();
     });
 
-    try{
-      if(window.claude && window.claude.use) dbApi = await window.claude.use('db');
-    }catch(e){ dbApi = null; }
+    document.getElementById('meetingSelect').addEventListener('change', e => {
+      if(dirty && !confirm('Discard unsaved changes and switch pack?')){
+        e.target.value = currentMeetingId;
+        return;
+      }
+      loadMeeting(e.target.value);
+    });
 
-    if(dbApi){
-      docRef = dbApi.doc('pack/current');
-      let data = null;
-      try{
-        const snap = await docRef.get();
-        data = snap.exists ? snap.data() : null;
-      }catch(e){ data = null; }
-      renderState(data);
-      dirty = false;
-      setSaveStatus(data && data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'No saved version yet — click Save');
-      docRef.onSnapshot(handleSnapshot, handleSnapshotError);
-    } else {
+    try{
+      sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      await loadMeetingList();
+    }catch(e){
+      sb = null;
+      document.querySelector('.meeting-picker').style.display = 'none';
+
       let data = null;
       const seed = document.getElementById('seedData');
       if(seed){
@@ -1260,7 +1358,7 @@
 
       const btn = document.getElementById('saveBtn');
       btn.title = 'Click Save to open a folder dialog (pick this file in the IMD folder to overwrite it)';
-      setSaveStatus(data && data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'Not saved yet');
+      setSaveStatus(data && data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'Offline — not connected to shared storage');
     }
   }
 
