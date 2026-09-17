@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMD Practice Meeting Pack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#103959;
+    --navy-ink:#0c2a42;
+    --teal:#0B8CB2;
+    --blue:#2D6196;
+    --amber:#FAA11C;
+    --red:#EF462F;
+    --green:#2F8F5B;
+    --grey:#8A8D91;
+    --grey-light:#E7E6E6;
+    --grey-mid:#BDBEC1;
+    --ink:#11151A;
+    --paper:#F5F6F7;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Lato',Segoe UI,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    padding-bottom:60px;
+  }
+  a{color:var(--teal);}
+
+  /* ---------- Instructions banner ---------- */
+  .howto{
+    background:#FFF6E6;
+    border-bottom:1px solid #F0DDAE;
+    color:#5c4813;
+    font-size:13px;
+    padding:10px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .howto p{margin:0;line-height:1.5;}
+  .howto button{
+    background:none;
+    border:1px solid #d9b45e;
+    color:#5c4813;
+    border-radius:6px;
+    padding:4px 10px;
+    cursor:pointer;
+    font-size:12px;
+    white-space:nowrap;
+  }
+  .howto.hidden{display:none;}
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:28px 32px 24px;
+  }
+  .header-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+    max-width:1100px;
+    margin:0 auto;
+    flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:16px;}
+  .brand img{height:64px;width:auto;display:block;}
+  .brand-title{line-height:1.15;}
+  .brand-title .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#9fc3d8;
+    font-weight:700;
+  }
+  .brand-title h1{
+    margin:2px 0 0;
+    font-size:22px;
+    font-weight:900;
+  }
+  .meeting-meta{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:flex-start;
+  }
+  .meta-box{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:10px;
+    padding:8px 14px;
+    min-width:120px;
+  }
+  .meta-box .label{
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#9fc3d8;
+    font-weight:700;
+  }
+  .meta-box [contenteditable]{
+    font-size:15px;
+    font-weight:700;
+    margin-top:2px;
+    outline:none;
+  }
+  .meta-box [contenteditable]:focus{
+    border-bottom:1px dashed #9fc3d8;
+  }
+  .meta-box [contenteditable]:empty:before{
+    content:attr(data-placeholder);
+    color:rgba(255,255,255,.4);
+    font-style:italic;
+    font-weight:600;
+  }
+  .meta-box input[type="date"]{
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    margin-top:2px;
+    outline:none;
+    border:none;
+    background:transparent;
+    color:#fff;
+    padding:0;
+    cursor:pointer;
+    color-scheme:dark;
+  }
+  .meta-box input[type="date"]:focus{
+    border-bottom:1px dashed #9fc3d8;
+  }
+
+  .attendees{
+    max-width:1100px;
+    margin:18px auto 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .attendees .label{
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#9fc3d8;
+    font-weight:700;
+    margin-right:4px;
+  }
+  .pill{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.28);
+    color:#fff;
+    border-radius:999px;
+    padding:5px 14px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    user-select:none;
+    transition:.15s;
+  }
+  .pill.absent{
+    background:transparent;
+    border-color:rgba(255,255,255,.18);
+    color:rgba(255,255,255,.4);
+    text-decoration:line-through;
+  }
+
+  /* ---------- Layout shell ---------- */
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:28px 24px 0;
+  }
+  section{margin-bottom:34px;}
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .section-head h2{
+    font-size:13px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--navy);
+    font-weight:900;
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-head h2::before{
+    content:"";
+    width:6px;height:6px;
+    background:var(--teal);
+    display:inline-block;
+    border-radius:2px;
+  }
+  .btn-add{
+    background:none;
+    border:1px solid var(--grey-mid);
+    color:var(--navy);
+    border-radius:7px;
+    padding:5px 12px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-add:hover{border-color:var(--teal);color:var(--teal);}
+
+  /* ---------- Agenda ---------- */
+  .agenda-card{
+    background:var(--card);
+    border:1px solid #E4E6E8;
+    border-radius:12px;
+    padding:18px 22px;
+  }
+  #agendaList{
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:agenda;
+  }
+  #agendaList li{
+    counter-increment:agenda;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:9px 0;
+    border-bottom:1px solid #F0F1F2;
+  }
+  #agendaList li:last-child{border-bottom:none;}
+  #agendaList li::before{
+    content:counter(agenda);
+    flex:0 0 22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:1px;
+  }
+  #agendaList [contenteditable]{
+    flex:1;
+    outline:none;
+    font-size:14.5px;
+    line-height:1.5;
+  }
+  .row-del{
+    background:none;border:none;color:var(--grey-mid);
+    cursor:pointer;font-size:15px;line-height:1;padding:2px 4px;
+    opacity:.6;
+  }
+  .row-del:hover{color:var(--red);opacity:1;}
+
+  /* ---------- Team grid ---------- */
+  .team-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .person-card{
+    background:var(--card);
+    border:1px solid #E4E6E8;
+    border-top:4px solid var(--accent,var(--teal));
+    border-radius:12px;
+    padding:20px;
+  }
+  .person-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .person-id{display:flex;align-items:center;gap:12px;}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--accent,var(--teal));
+    color:#fff;font-weight:900;font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 auto;
+  }
+  .person-name{font-size:16px;font-weight:900;color:var(--navy);}
+  .person-sub{font-size:11px;color:var(--grey);margin-top:1px;}
+  .status-badge{
+    border:none;
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:11.5px;
+    font-weight:800;
+    letter-spacing:.02em;
+    cursor:pointer;
+    color:#fff;
+    white-space:nowrap;
+  }
+  select.status-select{
+    background-color:var(--grey);
+    font-family:inherit;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    padding:6px 26px 6px 14px;
+    background-repeat:no-repeat;
+    background-position:right 10px center;
+    background-size:9px 6px;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='white' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  }
+  select.status-select::-ms-expand{display:none;}
+
+  /* ---------- Task blocks (multiple tasks per person) ---------- */
+  .task-list{display:flex;flex-direction:column;}
+  .task-block{
+    padding-top:16px;
+    margin-top:16px;
+    border-top:1px dashed #E4E6E8;
+  }
+  .task-block:first-child{padding-top:0;margin-top:0;border-top:none;}
+  .task-block-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .task-title{
+    font-size:13.5px;
+    font-weight:800;
+    color:var(--navy);
+    outline:none;
+    padding:4px 6px;
+    border-radius:6px;
+    flex:1;
+  }
+  .task-title:focus{background:var(--paper);}
+  .task-title:empty:before{
+    content:attr(data-placeholder);
+    color:#A9ACB0;
+    font-style:italic;
+    font-weight:600;
+  }
+  .task-block-actions{display:flex;align-items:center;gap:6px;}
+  .task-block-actions .row-del{font-size:17px;}
+  .task-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:12px;
+  }
+  .add-task-row{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid #F0F1F2;
+    text-align:right;
+  }
+
+  /* ---------- Numbered sub-list (e.g. "what was meant to do") ---------- */
+  .sublist{
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:subtask;
+  }
+  .sublist li{
+    counter-increment:subtask;
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .sublist li::before{
+    content:counter(subtask)".";
+    flex:0 0 16px;
+    padding-top:8px;
+    font-size:12.5px;
+    font-weight:800;
+    color:var(--accent,var(--teal));
+  }
+  .sublist [contenteditable]{
+    flex:1;
+    outline:none;
+    font-size:14px;
+    line-height:1.55;
+    padding:8px 8px;
+    border-radius:8px;
+  }
+  .sublist [contenteditable]:focus{background:#fff;border:1px solid var(--accent,var(--teal));padding:7px 7px;}
+  .sublist [contenteditable]:empty:before{
+    content:attr(data-placeholder);
+    color:#A9ACB0;
+    font-style:italic;
+  }
+  .sublist .row-del{margin-top:4px;}
+
+  /* ---------- Per-item status + progress bar (todo-list only) ---------- */
+  .todo-body{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .item-controls{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    padding:0 8px 6px;
+  }
+  select.item-status{
+    padding:4px 22px 4px 10px;
+    font-size:10.5px;
+    background-size:8px 5px;
+    background-position:right 8px center;
+  }
+  .progress-bar{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    flex:1;
+    min-width:130px;
+  }
+  input.progress-slider{
+    -webkit-appearance:none;
+    appearance:none;
+    flex:1;
+    height:10px;
+    border-radius:5px;
+    outline:none;
+    cursor:pointer;
+    background:var(--grey-light);
+  }
+  input.progress-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:var(--accent,var(--teal));
+    border:3px solid #fff;
+    box-shadow:0 0 0 1.5px var(--accent,var(--teal)), 0 1px 3px rgba(0,0,0,.25);
+    cursor:pointer;
+    margin-top:-5px;
+  }
+  input.progress-slider::-moz-range-thumb{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:var(--accent,var(--teal));
+    border:3px solid #fff;
+    box-shadow:0 0 0 1.5px var(--accent,var(--teal)), 0 1px 3px rgba(0,0,0,.25);
+    cursor:pointer;
+  }
+  input.progress-slider::-moz-range-track{
+    height:10px;
+    border-radius:5px;
+    background:transparent;
+  }
+  .bar-pct{
+    font-size:11px;
+    color:var(--grey);
+    font-weight:800;
+    width:34px;
+    text-align:right;
+    flex:0 0 auto;
+  }
+
+  .btn-add-sm{
+    background:none;
+    border:1px dashed var(--grey-mid);
+    color:var(--grey);
+    border-radius:6px;
+    padding:3px 10px;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:2px;
+  }
+  .btn-add-sm:hover{border-color:var(--accent,var(--teal));border-style:solid;color:var(--accent,var(--teal));}
+
+  .field{margin-top:14px;}
+  .field .label{
+    font-size:10.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--grey);
+    font-weight:800;
+    margin-bottom:5px;
+  }
+  .field [contenteditable]{
+    font-size:14px;
+    line-height:1.55;
+    outline:none;
+    min-height:20px;
+    padding:8px 10px;
+    background:var(--paper);
+    border:1px solid transparent;
+    border-radius:8px;
+  }
+  .field [contenteditable]:focus{
+    background:#fff;
+    border-color:var(--accent,var(--teal));
+  }
+  .field [contenteditable]:empty:before{
+    content:attr(data-placeholder);
+    color:#A9ACB0;
+    font-style:italic;
+  }
+
+
+  .updated{font-size:11px;color:var(--grey);}
+  .updated b{color:var(--ink);font-weight:700;}
+  .btn-stamp{
+    background:none;
+    border:1px solid var(--grey-mid);
+    color:var(--navy);
+    border-radius:6px;
+    padding:4px 10px;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-stamp:hover{border-color:var(--accent,var(--teal));color:var(--accent,var(--teal));}
+
+  /* ---------- Notes ---------- */
+  .notes-card{
+    background:var(--card);
+    border:1px solid #E4E6E8;
+    border-radius:12px;
+    padding:20px 22px;
+  }
+  #notesArea{
+    min-height:120px;
+    outline:none;
+    font-size:14px;
+    line-height:1.7;
+    white-space:pre-wrap;
+  }
+  #notesArea:empty:before{
+    content:attr(data-placeholder);
+    color:#A9ACB0;
+    font-style:italic;
+  }
+
+  /* ---------- Actions table ---------- */
+  .actions-card{
+    background:var(--card);
+    border:1px solid #E4E6E8;
+    border-radius:12px;
+    padding:6px 22px 18px;
+    overflow-x:auto;
+  }
+  table.actions{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    min-width:640px;
+  }
+  table.actions th{
+    text-align:left;
+    font-size:10.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--grey);
+    font-weight:800;
+    padding:14px 10px 8px;
+    border-bottom:2px solid #E4E6E8;
+  }
+  table.actions td{
+    padding:10px;
+    border-bottom:1px solid #F0F1F2;
+    vertical-align:top;
+  }
+  table.actions td[contenteditable]{outline:none;}
+  table.actions td[contenteditable]:focus{background:var(--paper);border-radius:6px;}
+  table.actions td[contenteditable]:empty:before{
+    content:attr(data-placeholder);
+    color:#A9ACB0;
+    font-style:italic;
+  }
+  td.col-del{text-align:center;width:30px;}
+  table.actions select{
+    width:100%;
+    font-family:inherit;
+    font-size:13.5px;
+    color:var(--ink);
+    border:1px solid transparent;
+    background:var(--paper);
+    border-radius:6px;
+    padding:7px 8px;
+    outline:none;
+    cursor:pointer;
+  }
+  table.actions select:focus{border-color:var(--teal);background:#fff;}
+  table.actions input.due-date{
+    width:100%;
+    font-family:inherit;
+    font-size:13.5px;
+    color:var(--ink);
+    border:1px solid transparent;
+    background:var(--paper);
+    border-radius:6px;
+    padding:6.5px 8px;
+    outline:none;
+    cursor:pointer;
+  }
+  table.actions input.due-date:focus{border-color:var(--teal);background:#fff;}
+  table.actions input.due-date::-webkit-calendar-picker-indicator{cursor:pointer;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width:1100px;
+    margin:10px auto 0;
+    padding:14px 24px 30px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:var(--grey);
+    font-size:11.5px;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .save-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .save-status{font-size:11px;color:var(--grey);white-space:nowrap;}
+  .btn-print{
+    background:none;
+    color:var(--navy);
+    border:1px solid var(--grey-mid);
+    border-radius:8px;
+    padding:8px 16px;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-print:hover{border-color:var(--teal);color:var(--teal);}
+  .btn-save{
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:9px 20px;
+    font-size:12.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .btn-save:hover{background:#08708c;}
+  .btn-save:disabled{background:var(--grey-mid);cursor:not-allowed;}
+
+  @media(max-width:760px){
+    .team-grid{grid-template-columns:1fr;}
+    .header-top{flex-direction:column;}
+  }
+
+  @media print{
+    .howto,.btn-add,.btn-add-sm,.row-del,.btn-stamp,.btn-save,.save-status,footer .btn-print{display:none!important;}
+    body{background:#fff;padding-bottom:0;}
+    header{background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .person-card,.agenda-card,.notes-card,.actions-card{break-inside:avoid;}
+    section{margin-bottom:20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="howto" id="howto">
+  <p><b>How this pack works:</b> click into any field to edit it, and use the "+ Add" buttons for extra tasks, todo/focus points, agenda items or actions. When you're happy with your update, click <b>Save</b> at the bottom — it opens a folder dialog; save it over this same file in the IMD folder ("IMD Practice Meeting Pack.html"). Teammates will see your update next time they open it from OneDrive/Teams. (If your browser can't open that dialog, Save will tell you to press Ctrl+S and choose "Webpage, HTML only" instead.)</p>
+  <button onclick="document.getElementById('howto').classList.add('hidden')">Got it, hide this</button>
+</div>
+
+<header>
+  <div class="header-top">
+    <div class="brand">
+      <img src="data:image/png;base64,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" alt="AIA logo">
+      <div class="brand-title">
+        <h1>IMD Practice &mdash; Bi-Weekly Meeting Pack</h1>
+      </div>
+    </div>
+    <div class="meeting-meta">
+      <div class="meta-box">
+        <div class="label">Meeting date</div>
+        <input type="date" id="metaDate">
+      </div>
+    </div>
+  </div>
+  <div class="attendees">
+    <span class="label">Attendees</span>
+    <span class="pill" data-person="Joseph" onclick="this.classList.toggle('absent')">Joseph</span>
+    <span class="pill" data-person="Reinhardt" onclick="this.classList.toggle('absent')">Reinhardt</span>
+    <span class="pill" data-person="Ayo" onclick="this.classList.toggle('absent')">Ayo</span>
+    <span class="pill" data-person="Manish" onclick="this.classList.toggle('absent')">Manish</span>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="section-head">
+      <h2>Agenda</h2>
+      <button class="btn-add" onclick="addAgendaItem()">+ Add item</button>
+    </div>
+    <div class="agenda-card">
+      <ol id="agendaList"></ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Team Task Updates</h2>
+    </div>
+    <div class="team-grid">
+
+      <div class="person-card" data-person="Joseph" style="--accent:var(--teal)">
+        <div class="person-head">
+          <div class="person-id">
+            <div class="avatar">J</div>
+            <div>
+              <div class="person-name">Joseph</div>
+              <div class="person-sub">Team member</div>
+            </div>
+          </div>
+        </div>
+        <div class="task-list"></div>
+        <div class="add-task-row">
+          <button class="btn-add" onclick="addTask(this)">+ Add another task</button>
+        </div>
+      </div>
+
+      <div class="person-card" data-person="Reinhardt" style="--accent:var(--blue)">
+        <div class="person-head">
+          <div class="person-id">
+            <div class="avatar">R</div>
+            <div>
+              <div class="person-name">Reinhardt</div>
+              <div class="person-sub">Team member</div>
+            </div>
+          </div>
+        </div>
+        <div class="task-list"></div>
+        <div class="add-task-row">
+          <button class="btn-add" onclick="addTask(this)">+ Add another task</button>
+        </div>
+      </div>
+
+      <div class="person-card" data-person="Ayo" style="--accent:var(--amber)">
+        <div class="person-head">
+          <div class="person-id">
+            <div class="avatar">A</div>
+            <div>
+              <div class="person-name">Ayo</div>
+              <div class="person-sub">Team member</div>
+            </div>
+          </div>
+        </div>
+        <div class="task-list"></div>
+        <div class="add-task-row">
+          <button class="btn-add" onclick="addTask(this)">+ Add another task</button>
+        </div>
+      </div>
+
+      <div class="person-card" data-person="Manish" style="--accent:var(--navy)">
+        <div class="person-head">
+          <div class="person-id">
+            <div class="avatar">M</div>
+            <div>
+              <div class="person-name">Manish</div>
+              <div class="person-sub">Team member &middot; agenda &amp; pack owner</div>
+            </div>
+          </div>
+        </div>
+        <div class="task-list"></div>
+        <div class="add-task-row">
+          <button class="btn-add" onclick="addTask(this)">+ Add another task</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Meeting Notes &amp; Decisions</h2>
+    </div>
+    <div class="notes-card">
+      <div id="notesArea" contenteditable="true" data-placeholder="Capture key discussion points, decisions and risks raised during the meeting..."></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Follow-up Actions</h2>
+      <button class="btn-add" onclick="addActionRow()">+ Add action</button>
+    </div>
+    <div class="actions-card">
+      <table class="actions">
+        <thead>
+          <tr>
+            <th style="width:38%">Action</th>
+            <th style="width:16%">Owner</th>
+            <th style="width:16%">Due date</th>
+            <th style="width:20%">Status</th>
+            <th class="col-del"></th>
+          </tr>
+        </thead>
+        <tbody id="actionsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Africa International Advisors &middot; IMD Practice &middot; shared pack, saved for the whole team</span>
+  <div class="save-controls">
+    <span class="save-status" id="saveStatus">Loading&hellip;</span>
+    <button class="btn-print" onclick="window.print()">Print / PDF</button>
+    <button class="btn-save" id="saveBtn" onclick="saveState()">Save</button>
+  </div>
+</footer>
+
+<script>
+  const TEAM = ['Joseph','Reinhardt','Ayo','Manish'];
+  const DEFAULT_AGENDA = [
+    'Review actions from last meeting',
+    'Team progress updates — Joseph, Reinhardt, Ayo, Manish',
+    'Blockers & support needed',
+    'New tasks / reprioritisation',
+    'AOB & confirm next meeting date'
+  ];
+  const STATES = [
+    {name:'Not started', color:'var(--grey)'},
+    {name:'On track',    color:'var(--teal)'},
+    {name:'At risk',     color:'var(--amber)'},
+    {name:'Delayed',     color:'var(--red)'},
+    {name:'Complete',    color:'var(--green)'}
+  ];
+
+  let dbApi = null;
+  let docRef = null;
+  let dirty = false;
+  let localFileHandle = null;
+
+  /* ---------------- status select ---------------- */
+
+  function updateStatusSelect(sel){
+    const match = STATES.find(s => s.name === sel.value);
+    sel.style.background = match ? match.color : STATES[0].color;
+  }
+
+  function stampToday(btn){
+    const target = btn.closest('.task-footer').querySelector('.updated-stamp');
+    const d = new Date();
+    const opts = { day:'numeric', month:'short', year:'numeric' };
+    target.textContent = d.toLocaleDateString('en-GB', opts);
+  }
+
+  /* ---------------- sub-lists (todo / focus items) ---------------- */
+
+  function addSubItemToList(listEl, item, autoFocus){
+    if(autoFocus === undefined) autoFocus = true;
+    if(typeof item === 'string' || item == null) item = { text: item || '' };
+
+    const li = document.createElement('li');
+    const isTodo = listEl.classList.contains('todo-list');
+
+    if(isTodo){
+      li.innerHTML =
+        '<div class="todo-body">' +
+          '<div contenteditable="true" data-placeholder="Item to be done"></div>' +
+          '<div class="item-controls">' +
+            '<select class="status-badge status-select item-status" onchange="updateStatusSelect(this)">' +
+              '<option>Not started</option>' +
+              '<option>On track</option>' +
+              '<option>At risk</option>' +
+              '<option>Delayed</option>' +
+              '<option>Complete</option>' +
+            '</select>' +
+            '<div class="progress-bar">' +
+              '<input type="range" class="progress-slider" min="0" max="100" step="5" value="0" oninput="updateProgressSlider(this)">' +
+              '<span class="bar-pct">0%</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="row-del" onclick="this.parentElement.remove()">&times;</button>';
+
+      li.querySelector('[contenteditable]').textContent = item.text || '';
+
+      const sel = li.querySelector('.item-status');
+      sel.value = item.status || 'Not started';
+      updateStatusSelect(sel);
+
+      const pct = Math.max(0, Math.min(100, item.progress || 0));
+      const slider = li.querySelector('.progress-slider');
+      slider.value = pct;
+      updateProgressSlider(slider, true);
+    } else {
+      li.innerHTML = '<div contenteditable="true" data-placeholder="Focus item"></div><button class="row-del" onclick="this.parentElement.remove()">&times;</button>';
+      li.querySelector('[contenteditable]').textContent = item.text || '';
+    }
+
+    listEl.appendChild(li);
+    if(autoFocus) li.querySelector('[contenteditable]').focus();
+  }
+
+  function addSubItem(btn){
+    addSubItemToList(btn.previousElementSibling, '', true);
+  }
+
+  function updateProgressSlider(el, skipDirty){
+    const pct = el.value;
+    el.style.background = 'linear-gradient(to right, var(--accent,var(--teal)) 0%, var(--accent,var(--teal)) ' + pct + '%, var(--grey-light) ' + pct + '%, var(--grey-light) 100%)';
+    const label = el.parentElement.querySelector('.bar-pct');
+    if(label) label.textContent = pct + '%';
+    if(!skipDirty) markDirty();
+  }
+
+  /* ---------------- agenda ---------------- */
+
+  function addAgendaItem(text, autoFocus){
+    if(autoFocus === undefined) autoFocus = true;
+    const li = document.createElement('li');
+    li.innerHTML = '<div contenteditable="true" data-placeholder="Agenda item"></div><button class="row-del" onclick="this.parentElement.remove()">&times;</button>';
+    li.querySelector('[contenteditable]').textContent = text || '';
+    document.getElementById('agendaList').appendChild(li);
+    if(autoFocus) li.querySelector('[contenteditable]').focus();
+  }
+
+  /* ---------------- task blocks ---------------- */
+
+  function addTask(source, data, autoFocus){
+    if(autoFocus === undefined) autoFocus = true;
+    data = data || {};
+    const card = (source.classList && source.classList.contains('person-card')) ? source : source.closest('.person-card');
+    const list = card.querySelector('.task-list');
+    const name = card.dataset.person;
+
+    const block = document.createElement('div');
+    block.className = 'task-block';
+    block.innerHTML =
+      '<div class="task-block-head">' +
+        '<div class="task-title" contenteditable="true" data-placeholder="Area you are responsible for"></div>' +
+        '<div class="task-block-actions">' +
+          '<button class="row-del" title="Remove task" onclick="removeTask(this)">&times;</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field">' +
+        '<div class="label">What ' + name + ' was meant to do</div>' +
+        '<ol class="sublist todo-list"></ol>' +
+        '<button class="btn-add-sm" onclick="addSubItem(this)">+ Add item</button>' +
+      '</div>' +
+      '<div class="field">' +
+        '<div class="label">Next focus</div>' +
+        '<ol class="sublist focus-list"></ol>' +
+        '<button class="btn-add-sm" onclick="addSubItem(this)">+ Add item</button>' +
+      '</div>' +
+      '<div class="task-footer">' +
+        '<div class="updated">Last updated: <b class="updated-stamp" contenteditable="true" data-placeholder="&mdash;"></b></div>' +
+        '<button class="btn-stamp" onclick="stampToday(this)">Mark updated today</button>' +
+      '</div>';
+
+    block.querySelector('.task-title').textContent = data.title || '';
+
+    const todoList = block.querySelector('.todo-list');
+    const todos = (data.todo && data.todo.length) ? data.todo : [{}];
+    todos.forEach(t => addSubItemToList(todoList, t, false));
+
+    const focusList = block.querySelector('.focus-list');
+    const focuses = (data.focus && data.focus.length) ? data.focus : [''];
+    focuses.forEach(t => addSubItemToList(focusList, t, false));
+
+    block.querySelector('.updated-stamp').textContent = data.updated || '';
+
+    list.appendChild(block);
+
+    if(autoFocus) block.querySelector('.task-title').focus();
+    return block;
+  }
+
+  function removeTask(btn){
+    const block = btn.closest('.task-block');
+    const list = block.parentElement;
+    if(list.querySelectorAll('.task-block').length <= 1){
+      block.querySelectorAll('[contenteditable]').forEach(el => el.textContent = '');
+      block.querySelectorAll('.todo-list .item-status').forEach(sel => { sel.value = 'Not started'; updateStatusSelect(sel); });
+      block.querySelectorAll('.todo-list .progress-slider').forEach(sl => { sl.value = 0; updateProgressSlider(sl, true); });
+      block.querySelectorAll('.sublist').forEach(sub => {
+        const items = sub.querySelectorAll('li');
+        items.forEach((li, i) => { if(i > 0) li.remove(); });
+      });
+      return;
+    }
+    block.remove();
+  }
+
+  /* ---------------- actions table ---------------- */
+
+  function addActionRow(data, autoFocus){
+    if(autoFocus === undefined) autoFocus = true;
+    data = data || {};
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td contenteditable="true" data-placeholder="Action to be taken"></td>' +
+      '<td><select class="owner-select">' +
+        '<option value="">Select owner</option>' +
+        '<option>Joseph</option>' +
+        '<option>Reinhardt</option>' +
+        '<option>Ayo</option>' +
+        '<option>Manish</option>' +
+      '</select></td>' +
+      '<td><input type="date" class="due-date"></td>' +
+      '<td><select class="action-status-select">' +
+        '<option>Open</option>' +
+        '<option>In progress</option>' +
+        '<option>Blocked</option>' +
+        '<option>Done</option>' +
+      '</select></td>' +
+      '<td class="col-del"><button class="row-del" onclick="this.closest(\'tr\').remove()">&times;</button></td>';
+    tr.children[0].textContent = data.action || '';
+    tr.querySelector('.owner-select').value = data.owner || '';
+    tr.querySelector('.due-date').value = data.due || '';
+    tr.querySelector('.action-status-select').value = data.status || 'Open';
+    document.getElementById('actionsBody').appendChild(tr);
+    if(autoFocus) tr.children[0].focus();
+  }
+
+  /* ---------------- serialize / render ---------------- */
+
+  function serializeState(){
+    const state = { meta:{ attendees:{} }, agenda:[], people:{}, notes:'', actions:[] };
+
+    state.meta.date = document.getElementById('metaDate').value;
+    document.querySelectorAll('.attendees .pill').forEach(p => {
+      state.meta.attendees[p.dataset.person] = !p.classList.contains('absent');
+    });
+
+    document.querySelectorAll('#agendaList > li [contenteditable]').forEach(el => {
+      const t = el.textContent.trim();
+      if(t) state.agenda.push(t);
+    });
+
+    TEAM.forEach(name => {
+      const card = document.querySelector('.person-card[data-person="' + name + '"]');
+      const tasks = [];
+      card.querySelectorAll('.task-block').forEach(block => {
+        const todo = Array.from(block.querySelectorAll('.todo-list > li')).map(li => {
+          const text = li.querySelector('[contenteditable]').textContent.trim();
+          const statusEl = li.querySelector('.item-status');
+          const sliderEl = li.querySelector('.progress-slider');
+          const progress = sliderEl ? (parseInt(sliderEl.value, 10) || 0) : 0;
+          return { text, status: statusEl ? statusEl.value : 'Not started', progress };
+        }).filter(item => item.text);
+
+        tasks.push({
+          title: block.querySelector('.task-title').textContent.trim(),
+          todo: todo,
+          focus: Array.from(block.querySelectorAll('.focus-list [contenteditable]')).map(el => el.textContent.trim()).filter(Boolean),
+          updated: block.querySelector('.updated-stamp').textContent.trim()
+        });
+      });
+      state.people[name] = tasks;
+    });
+
+    state.notes = (document.getElementById('notesArea').textContent || '').trim();
+
+    document.querySelectorAll('#actionsBody > tr').forEach(tr => {
+      const action = tr.children[0].textContent.trim();
+      const owner = tr.querySelector('.owner-select').value;
+      const due = tr.querySelector('.due-date').value;
+      const status = tr.querySelector('.action-status-select').value;
+      if(action || owner || due) state.actions.push({ action, owner, due, status });
+    });
+
+    return state;
+  }
+
+  function renderState(state){
+    state = state || {};
+    const meta = state.meta || {};
+
+    document.getElementById('metaDate').value = meta.date || '';
+
+    const attendees = meta.attendees || {};
+    document.querySelectorAll('.attendees .pill').forEach(p => {
+      const present = attendees[p.dataset.person];
+      p.classList.toggle('absent', present === false);
+    });
+
+    document.getElementById('agendaList').innerHTML = '';
+    (state.agenda && state.agenda.length ? state.agenda : DEFAULT_AGENDA).forEach(text => addAgendaItem(text, false));
+
+    TEAM.forEach(name => {
+      const card = document.querySelector('.person-card[data-person="' + name + '"]');
+      const list = card.querySelector('.task-list');
+      list.innerHTML = '';
+      const tasks = (state.people && state.people[name] && state.people[name].length) ? state.people[name] : [{}];
+      tasks.forEach(t => addTask(card, t, false));
+    });
+
+    document.getElementById('notesArea').textContent = state.notes || '';
+
+    document.getElementById('actionsBody').innerHTML = '';
+    const actions = (state.actions && state.actions.length) ? state.actions : [{}];
+    actions.forEach(a => addActionRow(a, false));
+  }
+
+  /* ---------------- save / sync ---------------- */
+
+  function setSaveStatus(text){
+    const el = document.getElementById('saveStatus');
+    if(el) el.textContent = text;
+  }
+
+  function formatTimestamp(iso){
+    if(!iso) return '';
+    try{
+      const d = new Date(iso);
+      return d.toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+    }catch(e){ return ''; }
+  }
+
+  function markDirty(){
+    if(!dirty){
+      dirty = true;
+      setSaveStatus('Unsaved changes');
+    }
+  }
+
+  async function saveState(){
+    const btn = document.getElementById('saveBtn');
+
+    if(docRef){
+      btn.disabled = true;
+      setSaveStatus('Saving…');
+      const state = serializeState();
+      state.savedAt = new Date().toISOString();
+      try{
+        await docRef.set(state);
+        dirty = false;
+        setSaveStatus('Saved just now');
+      }catch(e){
+        setSaveStatus('Save failed — try again');
+      }
+      btn.disabled = false;
+      return;
+    }
+
+    if(window.showSaveFilePicker){
+      btn.disabled = true;
+      setSaveStatus('Saving…');
+      prepareLocalSeed();
+      const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      try{
+        if(!localFileHandle){
+          localFileHandle = await window.showSaveFilePicker({
+            suggestedName: 'IMD Practice Meeting Pack.html',
+            types: [{ description: 'HTML file', accept: { 'text/html': ['.html'] } }]
+          });
+        }
+        const writable = await localFileHandle.createWritable();
+        await writable.write(html);
+        await writable.close();
+        dirty = false;
+        setSaveStatus('Saved to file just now');
+      }catch(e){
+        localFileHandle = null;
+        if(e && e.name === 'AbortError'){
+          setSaveStatus('Save cancelled');
+        }else{
+          setSaveStatus('Couldn\'t open the save dialog — press Ctrl+S and choose "Webpage, HTML only" instead');
+        }
+      }
+      btn.disabled = false;
+      return;
+    }
+
+    prepareLocalSeed();
+    dirty = false;
+    setSaveStatus('Ready — now press Ctrl+S and choose "Webpage, HTML only"');
+  }
+
+  /* Bakes the current edits into a hidden data block so that whoever
+     opens the file next (after a Ctrl+S "Webpage, HTML only" save)
+     sees dropdowns, dates and status colours restored correctly —
+     a plain browser save does not preserve those on its own. */
+  function prepareLocalSeed(){
+    const state = serializeState();
+    state.savedAt = new Date().toISOString();
+    let seed = document.getElementById('seedData');
+    if(!seed){
+      seed = document.createElement('script');
+      seed.type = 'application/json';
+      seed.id = 'seedData';
+      document.body.appendChild(seed);
+    }
+    seed.textContent = JSON.stringify(state);
+  }
+
+  function handleSnapshot(snap){
+    if(!snap.exists) return;
+    if(snap.metadata.hasPendingWrites) return;
+    if(dirty){
+      setSaveStatus("Someone else saved — click Save to overwrite, or reload to see theirs");
+      return;
+    }
+    const data = snap.data();
+    renderState(data);
+    setSaveStatus(data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'Up to date');
+  }
+
+  function handleSnapshotError(){
+    setSaveStatus('Live sync lost — Save still works');
+  }
+
+  async function initApp(){
+    document.addEventListener('input', e => {
+      if(e.target.closest && e.target.closest('[contenteditable]')) markDirty();
+    });
+    document.addEventListener('change', e => {
+      if(e.target.matches && e.target.matches('select, input[type="date"]')) markDirty();
+    });
+    document.addEventListener('click', e => {
+      const t = e.target;
+      if(!t.classList) return;
+      if(t.classList.contains('pill') || t.classList.contains('btn-stamp') ||
+         t.classList.contains('row-del') || t.classList.contains('btn-add') || t.classList.contains('btn-add-sm')) markDirty();
+    });
+
+    try{
+      if(window.claude && window.claude.use) dbApi = await window.claude.use('db');
+    }catch(e){ dbApi = null; }
+
+    if(dbApi){
+      docRef = dbApi.doc('pack/current');
+      let data = null;
+      try{
+        const snap = await docRef.get();
+        data = snap.exists ? snap.data() : null;
+      }catch(e){ data = null; }
+      renderState(data);
+      dirty = false;
+      setSaveStatus(data && data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'No saved version yet — click Save');
+      docRef.onSnapshot(handleSnapshot, handleSnapshotError);
+    } else {
+      let data = null;
+      const seed = document.getElementById('seedData');
+      if(seed){
+        try{ data = JSON.parse(seed.textContent); }catch(e){ data = null; }
+      }
+      renderState(data);
+      dirty = false;
+
+      const btn = document.getElementById('saveBtn');
+      btn.title = 'Click Save to open a folder dialog (pick this file in the IMD folder to overwrite it)';
+      setSaveStatus(data && data.savedAt ? ('Last saved ' + formatTimestamp(data.savedAt)) : 'Not saved yet');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initApp);
+</script>
+
+</body>
+</html>
