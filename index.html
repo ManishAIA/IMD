@@ -88,58 +88,6 @@
     font-size:22px;
     font-weight:900;
   }
-  .meeting-meta{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:flex-start;
-  }
-  .meta-box{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:10px;
-    padding:8px 14px;
-    min-width:120px;
-  }
-  .meta-box .label{
-    font-size:10px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:#9fc3d8;
-    font-weight:700;
-  }
-  .meta-box [contenteditable]{
-    font-size:15px;
-    font-weight:700;
-    margin-top:2px;
-    outline:none;
-  }
-  .meta-box [contenteditable]:focus{
-    border-bottom:1px dashed #9fc3d8;
-  }
-  .meta-box [contenteditable]:empty:before{
-    content:attr(data-placeholder);
-    color:rgba(255,255,255,.4);
-    font-style:italic;
-    font-weight:600;
-  }
-  .meta-box input[type="date"]{
-    font-family:inherit;
-    font-size:15px;
-    font-weight:700;
-    margin-top:2px;
-    outline:none;
-    border:none;
-    background:transparent;
-    color:#fff;
-    padding:0;
-    cursor:pointer;
-    color-scheme:dark;
-  }
-  .meta-box input[type="date"]:focus{
-    border-bottom:1px dashed #9fc3d8;
-  }
-
   .attendees{
     max-width:1100px;
     margin:18px auto 0;
@@ -685,12 +633,6 @@
       <select id="meetingSelect"></select>
       <button class="btn-new" onclick="createNewMeeting()">+ New pack</button>
     </div>
-    <div class="meeting-meta">
-      <div class="meta-box">
-        <div class="label">Meeting date</div>
-        <input type="date" id="metaDate">
-      </div>
-    </div>
   </div>
   <div class="attendees">
     <span class="label">Attendees</span>
@@ -839,6 +781,7 @@
 
   let sb = null;
   let currentMeetingId = null;
+  let currentMeetingDate = null;
   let realtimeChannel = null;
   let dirty = false;
   let localFileHandle = null;
@@ -1032,7 +975,7 @@
   function serializeState(){
     const state = { meta:{ attendees:{} }, agenda:[], people:{}, actions:[] };
 
-    state.meta.date = document.getElementById('metaDate').value;
+    state.meta.date = currentMeetingDate;
     document.querySelectorAll('.attendees .pill').forEach(p => {
       state.meta.attendees[p.dataset.person] = !p.classList.contains('absent');
     });
@@ -1080,7 +1023,7 @@
     state = state || {};
     const meta = state.meta || {};
 
-    document.getElementById('metaDate').value = meta.date || '';
+    currentMeetingDate = meta.date || null;
 
     const attendees = meta.attendees || {};
     document.querySelectorAll('.attendees .pill').forEach(p => {
