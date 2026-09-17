@@ -506,6 +506,14 @@
     font-style:italic;
   }
   td.col-del{text-align:center;width:30px;}
+  td.col-move{text-align:center;width:44px;white-space:nowrap;}
+  .row-move{
+    background:none;border:none;color:var(--grey-mid);
+    cursor:pointer;font-size:13px;line-height:1;padding:2px 3px;
+    opacity:.6;
+  }
+  .row-move:hover:not(:disabled){color:var(--teal);opacity:1;}
+  .row-move:disabled{opacity:.25;cursor:default;}
   table.actions select{
     width:100%;
     font-family:inherit;
@@ -668,6 +676,7 @@
             <th style="width:16%">Owner</th>
             <th style="width:16%">Due date</th>
             <th style="width:20%">Status</th>
+            <th class="col-move"></th>
             <th class="col-del"></th>
           </tr>
         </thead>
@@ -962,13 +971,43 @@
         '<option>Blocked</option>' +
         '<option>Done</option>' +
       '</select></td>' +
-      '<td class="col-del"><button class="row-del" onclick="this.closest(\'tr\').remove()">&times;</button></td>';
+      '<td class="col-move">' +
+        '<button class="row-move" title="Move up" onclick="moveActionRow(this,-1)">&uarr;</button>' +
+        '<button class="row-move" title="Move down" onclick="moveActionRow(this,1)">&darr;</button>' +
+      '</td>' +
+      '<td class="col-del"><button class="row-del" onclick="removeActionRow(this)">&times;</button></td>';
     tr.children[0].textContent = data.action || '';
     tr.querySelector('.owner-select').value = data.owner || '';
     tr.querySelector('.due-date').value = data.due || '';
     tr.querySelector('.action-status-select').value = data.status || 'Open';
     document.getElementById('actionsBody').appendChild(tr);
+    refreshActionMoveButtons();
     if(autoFocus) tr.children[0].focus();
+  }
+
+  function removeActionRow(btn){
+    btn.closest('tr').remove();
+    refreshActionMoveButtons();
+    markDirty();
+  }
+
+  function moveActionRow(btn, dir){
+    const tr = btn.closest('tr');
+    const sibling = dir < 0 ? tr.previousElementSibling : tr.nextElementSibling;
+    if(!sibling) return;
+    if(dir < 0) tr.parentElement.insertBefore(tr, sibling);
+    else tr.parentElement.insertBefore(sibling, tr);
+    refreshActionMoveButtons();
+    markDirty();
+  }
+
+  function refreshActionMoveButtons(){
+    const rows = document.querySelectorAll('#actionsBody > tr');
+    rows.forEach((tr, i) => {
+      const [up, down] = tr.querySelectorAll('.row-move');
+      up.disabled = (i === 0);
+      down.disabled = (i === rows.length - 1);
+    });
   }
 
   /* ---------------- serialize / render ---------------- */
