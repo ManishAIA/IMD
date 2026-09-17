@@ -520,37 +520,6 @@
 
   .updated{font-size:11px;color:var(--grey);}
   .updated b{color:var(--ink);font-weight:700;}
-  .btn-stamp{
-    background:none;
-    border:1px solid var(--grey-mid);
-    color:var(--navy);
-    border-radius:6px;
-    padding:4px 10px;
-    font-size:11px;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .btn-stamp:hover{border-color:var(--accent,var(--teal));color:var(--accent,var(--teal));}
-
-  /* ---------- Notes ---------- */
-  .notes-card{
-    background:var(--card);
-    border:1px solid #E4E6E8;
-    border-radius:12px;
-    padding:20px 22px;
-  }
-  #notesArea{
-    min-height:120px;
-    outline:none;
-    font-size:14px;
-    line-height:1.7;
-    white-space:pre-wrap;
-  }
-  #notesArea:empty:before{
-    content:attr(data-placeholder);
-    color:#A9ACB0;
-    font-style:italic;
-  }
 
   /* ---------- Actions table ---------- */
   .actions-card{
@@ -689,10 +658,10 @@
   }
 
   @media print{
-    .howto,.btn-add,.btn-add-sm,.row-del,.btn-stamp,.btn-save,.save-status,footer .btn-print{display:none!important;}
+    .howto,.btn-add,.btn-add-sm,.row-del,.btn-save,.save-status,footer .btn-print{display:none!important;}
     body{background:#fff;padding-bottom:0;}
     header{background:var(--navy)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    .person-card,.agenda-card,.notes-card,.actions-card{break-inside:avoid;}
+    .person-card,.agenda-card,.actions-card{break-inside:avoid;}
     section{margin-bottom:20px;}
   }
 </style>
@@ -819,15 +788,6 @@
 
   <section>
     <div class="section-head">
-      <h2>Meeting Notes &amp; Decisions</h2>
-    </div>
-    <div class="notes-card">
-      <div id="notesArea" contenteditable="true" data-placeholder="Capture key discussion points, decisions and risks raised during the meeting..."></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-head">
       <h2>Follow-up Actions</h2>
       <button class="btn-add" onclick="addActionRow()">+ Add action</button>
     </div>
@@ -862,11 +822,9 @@
 <script>
   const TEAM = ['Joseph','Reinhardt','Ayo','Manish'];
   const DEFAULT_AGENDA = [
-    'Review actions from last meeting',
     'Team progress updates — Joseph, Reinhardt, Ayo, Manish',
     'Blockers & support needed',
-    'New tasks / reprioritisation',
-    'AOB & confirm next meeting date'
+    'New tasks / reprioritisation'
   ];
   const STATES = [
     {name:'Not started', color:'var(--grey)'},
@@ -890,13 +848,6 @@
   function updateStatusSelect(sel){
     const match = STATES.find(s => s.name === sel.value);
     sel.style.background = match ? match.color : STATES[0].color;
-  }
-
-  function stampToday(btn){
-    const target = btn.closest('.task-footer').querySelector('.updated-stamp');
-    const d = new Date();
-    const opts = { day:'numeric', month:'short', year:'numeric' };
-    target.textContent = d.toLocaleDateString('en-GB', opts);
   }
 
   /* ---------------- sub-lists (todo / focus items) ---------------- */
@@ -1000,7 +951,6 @@
       '</div>' +
       '<div class="task-footer">' +
         '<div class="updated">Last updated: <b class="updated-stamp" contenteditable="true" data-placeholder="&mdash;"></b></div>' +
-        '<button class="btn-stamp" onclick="stampToday(this)">Mark updated today</button>' +
       '</div>';
 
     block.querySelector('.task-title').textContent = data.title || '';
@@ -1071,7 +1021,7 @@
   /* ---------------- serialize / render ---------------- */
 
   function serializeState(){
-    const state = { meta:{ attendees:{} }, agenda:[], people:{}, notes:'', actions:[] };
+    const state = { meta:{ attendees:{} }, agenda:[], people:{}, actions:[] };
 
     state.meta.date = document.getElementById('metaDate').value;
     document.querySelectorAll('.attendees .pill').forEach(p => {
@@ -1104,8 +1054,6 @@
       });
       state.people[name] = tasks;
     });
-
-    state.notes = (document.getElementById('notesArea').textContent || '').trim();
 
     document.querySelectorAll('#actionsBody > tr').forEach(tr => {
       const action = tr.children[0].textContent.trim();
@@ -1140,8 +1088,6 @@
       const tasks = (state.people && state.people[name] && state.people[name].length) ? state.people[name] : [{}];
       tasks.forEach(t => addTask(card, t, false));
     });
-
-    document.getElementById('notesArea').textContent = state.notes || '';
 
     document.getElementById('actionsBody').innerHTML = '';
     const actions = (state.actions && state.actions.length) ? state.actions : [{}];
@@ -1311,7 +1257,7 @@
   }
 
   async function createNewMeeting(){
-    const state = { meta:{ date:new Date().toISOString().slice(0,10), attendees:{} }, agenda:[], people:{}, notes:'', actions:[] };
+    const state = { meta:{ date:new Date().toISOString().slice(0,10), attendees:{} }, agenda:[], people:{}, actions:[] };
     const { data, error } = await sb.from('meetings').insert({ meeting_date: state.meta.date, state }).select('id, meeting_date, updated_at').single();
     if(error){ setSaveStatus('Could not create new pack'); return; }
     const { data: rows } = await sb.from('meetings').select('id, meeting_date, updated_at').order('meeting_date', { ascending:false });
@@ -1329,7 +1275,7 @@
     document.addEventListener('click', e => {
       const t = e.target;
       if(!t.classList) return;
-      if(t.classList.contains('pill') || t.classList.contains('btn-stamp') ||
+      if(t.classList.contains('pill') ||
          t.classList.contains('row-del') || t.classList.contains('btn-add') || t.classList.contains('btn-add-sm')) markDirty();
     });
 
