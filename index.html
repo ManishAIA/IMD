@@ -715,6 +715,27 @@
 
   <section>
     <div class="section-head">
+      <h2>Follow-up Actions</h2>
+      <button class="btn-add" onclick="addActionRow()">+ Add action</button>
+    </div>
+    <div class="actions-card">
+      <table class="actions">
+        <thead>
+          <tr>
+            <th style="width:38%">Action</th>
+            <th style="width:16%">Owner</th>
+            <th style="width:16%">Due date</th>
+            <th style="width:20%">Status</th>
+            <th class="col-del"></th>
+          </tr>
+        </thead>
+        <tbody id="actionsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
       <h2>Team Task Updates</h2>
     </div>
     <div class="team-grid">
@@ -783,27 +804,6 @@
         </div>
       </div>
 
-    </div>
-  </section>
-
-  <section>
-    <div class="section-head">
-      <h2>Follow-up Actions</h2>
-      <button class="btn-add" onclick="addActionRow()">+ Add action</button>
-    </div>
-    <div class="actions-card">
-      <table class="actions">
-        <thead>
-          <tr>
-            <th style="width:38%">Action</th>
-            <th style="width:16%">Owner</th>
-            <th style="width:16%">Due date</th>
-            <th style="width:20%">Status</th>
-            <th class="col-del"></th>
-          </tr>
-        </thead>
-        <tbody id="actionsBody"></tbody>
-      </table>
     </div>
   </section>
 
@@ -949,6 +949,11 @@
         '<ol class="sublist focus-list"></ol>' +
         '<button class="btn-add-sm" onclick="addSubItem(this)">+ Add item</button>' +
       '</div>' +
+      '<div class="field">' +
+        '<div class="label">Roadblocks</div>' +
+        '<ol class="sublist roadblocks-list"></ol>' +
+        '<button class="btn-add-sm" onclick="addSubItem(this)">+ Add item</button>' +
+      '</div>' +
       '<div class="task-footer">' +
         '<div class="updated">Last updated: <b class="updated-stamp" contenteditable="true" data-placeholder="&mdash;"></b></div>' +
       '</div>';
@@ -962,6 +967,10 @@
     const focusList = block.querySelector('.focus-list');
     const focuses = (data.focus && data.focus.length) ? data.focus : [''];
     focuses.forEach(t => addSubItemToList(focusList, t, false));
+
+    const roadblocksList = block.querySelector('.roadblocks-list');
+    const roadblocks = (data.roadblocks && data.roadblocks.length) ? data.roadblocks : [''];
+    roadblocks.forEach(t => addSubItemToList(roadblocksList, t, false));
 
     block.querySelector('.updated-stamp').textContent = data.updated || '';
 
@@ -1049,6 +1058,7 @@
           title: block.querySelector('.task-title').textContent.trim(),
           todo: todo,
           focus: Array.from(block.querySelectorAll('.focus-list [contenteditable]')).map(el => el.textContent.trim()).filter(Boolean),
+          roadblocks: Array.from(block.querySelectorAll('.roadblocks-list [contenteditable]')).map(el => el.textContent.trim()).filter(Boolean),
           updated: block.querySelector('.updated-stamp').textContent.trim()
         });
       });
